@@ -64,16 +64,28 @@ m1 <- map(    #flat priors
     sigma ~ dunif( 0 , 5 )
     ), data=pitchdata2 )
 precis(m1)
+plot(precis(m1))
 
-m2 <- map(    #sceptic priors
+#plotting the distribution of the data. Standard deviations of pitch.
+dens(pitchdata2$scaleSD[pitchdata2$diagnosis==1], col='green') #schizophrenics
+dens(pitchdata2$scaleSD[pitchdata2$diagnosis==0], add=T) #controls
+
+#making model with skeptical prior
+m2 <- map(    #skeptical priors
   alist(
     scaleSD ~ dnorm( mu , sigma ) ,
     mu <- a + b*diagnosis ,
-    a ~ dnorm( 0, 1) , #mean 10, sd 10
-    b ~ dnorm(  0,  ) ,
+    a ~ dnorm( 0, 2) , #mean 0, sd 2
+    b ~ dnorm(  0,  0.1) ,
     sigma ~ dunif( 0 , 5 )
     ), data=pitchdata2 )
 precis(m2)
+plot(precis(m2))
+
+#we motivate this prior by adding the very narrow prior with a mean of 0, and a standard deviation of 0.1. The scepticism is founded in the belief that there should be no major variation in pitch, when comparing schizophrenics to controls. Very convincing evidence is needed to turn this belief, when dealing with diagnosing scizophrenic, the contexts varrants that we need a high model accuracy, before being able to trust pitch variation in diagnosing scizophrenics.
+
+
+
 ```
 
 Step 4: Now re-run the model with the meta-analytic prior
